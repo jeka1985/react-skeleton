@@ -1,0 +1,12 @@
+:global {
+  html,
+  body,
+  #application,
+  #app-container {
+    width: 100%;
+    max-height: 100vh;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+}

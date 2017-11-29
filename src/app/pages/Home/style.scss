@@ -1,0 +1,20 @@
+.tabs {
+  height: 40px;
+  border: 1px solid #ccc;
+
+
+  .tab {
+    display: inline-block;
+    border-right: 1px solid #ccc;
+
+    line-height: 40px;
+    padding: 0 12px;
+    &:last-child {
+      border-right: 0;
+    }
+
+    &.active {
+      font-weight: bold;
+    }
+  }
+}
