@@ -13,9 +13,7 @@ export default function App(props) {
         <Modals/>
         <Header/>
         <Switch>
-          {routes.map((route, i) => <Route key={i} {...route}>
-            <route.component/>
-          </Route>)}
+          {routes.map((route, i) => <Route key={i} {...route}/>)}
         </Switch>
       </div>
   </Provider>;

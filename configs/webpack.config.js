@@ -1,6 +1,8 @@
 let webpack = require('webpack'),
     path = require('path'),
     ExtractPlugin = require('extract-text-webpack-plugin'),
+    UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+    ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
     BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let root = path.resolve(__dirname, '../'),
@@ -8,6 +10,8 @@ let root = path.resolve(__dirname, '../'),
     entryPath = path.resolve(root, 'src/entry'),
     excludeRe = /node_modules|build/,
     env = 'development',
+    shellBundleName = 'app',
+    vendorBundleName = 'vendor',
     isDev = env === 'development';
 
 module.exports = () => ({
@@ -19,13 +23,15 @@ module.exports = () => ({
   },
 
   entry: {
-    app: entryPath,
-    lib: Object.keys(require('../package.json').dependencies)
+    [shellBundleName]: entryPath,
+    [vendorBundleName]: Object.keys(require('../package.json').dependencies)
   },
 
   output: {
     filename: 'js/[name].js',
-    path: dest
+    chunkFilename: 'js/[name].js',
+    path: dest,
+    publicPath: '/build/'
   },
 
   resolveLoader: {
@@ -77,6 +83,11 @@ module.exports = () => ({
     ]
   },
 
+  devServer: {
+    historyApiFallback: true,
+    contentBase: root
+  },
+
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
@@ -84,20 +95,27 @@ module.exports = () => ({
       }
     }),
 
-    !isDev && new webpack.optimize.UglifyJsPlugin({
+    !isDev && new UglifyJsPlugin({
       sourceMap: true,
-      compress: { warnings: false },
-      output: { comments: isDev }
+      uglifyOptions: {
+        output: {
+          comments: false
+        },
+        compress: { warnings: false },
+        warnings: false
+      }
     }),
 
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'lib'
+      name: vendorBundleName
     }),
-
+    
     new ExtractPlugin({
-      filename: 'css/all.css'
+      filename: 'css/all.css',
+      allChunks: true
     })
-    //,
-    //new BundleAnalyzerPlugin()
+    // ,
+    // new BundleAnalyzerPlugin()
   ].filter(item => !!item)
 })
+

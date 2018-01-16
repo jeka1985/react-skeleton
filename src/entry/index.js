@@ -4,6 +4,9 @@ import App from 'app/components/App';
 
 render(<App data={{
   location: {
-    data: { path: '/' }
+    data: { 
+      path: '/',
+      resolved: true 
+    }
   }
 }}/>, document.getElementById('app-container'));

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { locationRequest } from 'app/actions/location';
+import { navigate } from 'app/actions/location';
 
 export default connect((state, props) => ({
   isActive: props.path == state.location.path
@@ -11,7 +11,7 @@ export default connect((state, props) => ({
     return <a
       onClick={e => {
         e.preventDefault();
-        props.dispatch(locationRequest({ path }));
+        props.dispatch(navigate(path));
       }}
       href={path}
       className={props.className}>

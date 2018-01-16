@@ -1,10 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  locationRequest,
-  locationSucceed,
-  locationFail
-} from 'app/actions/location';
+import { navigate, navigateSuccess, navigateFail } from 'app/actions/location';
 
 export default connect(state => ({
   path: state.location.data.path || '/',
@@ -13,8 +9,6 @@ export default connect(state => ({
   class RouterSwitch extends React.Component {
     constructor(props) {
       super(props);
-
-      var route = this.getRouteByPath(props.path);
 
       this.handlePopState = this.handlePopState.bind(this);
     }
@@ -30,7 +24,10 @@ export default connect(state => ({
     componentWillReceiveProps(nextProps) {
       var { pendingPath } = nextProps;
 
-      pendingPath && this.resolveNavigation(pendingPath);
+      if (pendingPath) {
+        window.history.pushState({ path: pendingPath }, null, pendingPath);
+        this.resolveNavigation(pendingPath);
+      }
     }
 
     resolveNavigation(path) {
@@ -44,17 +41,15 @@ export default connect(state => ({
     }
 
     handlePopState(e) {
-      this.props.dispatch(locationRequest({
-        path: window.location.pathname
-      }));
+      this.props.dispatch(navigate(window.location.pathname));
     }
 
     failTransition(path) {
-      this.props.dispatch(locationFail({ path }));
+      this.props.dispatch(navigateFail(path));
     }
 
     succeedTransition(path) {
-      this.props.dispatch(locationSucceed({ path }));
+      this.props.dispatch(navigateSuccess(path));
       window.scrollTo(0, 0);
     }
 
@@ -69,6 +64,9 @@ export default connect(state => ({
     }
 
     render() {
+
+      console.log(this.getRouteByPath(this.props.path));
+
       return this.getRouteByPath(this.props.path);
     }
   }

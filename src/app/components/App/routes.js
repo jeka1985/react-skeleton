@@ -1,17 +1,17 @@
+import React from 'react';
+import DynamicComponent from 'app/components/DynamicImport';
+
 export default [
   {
     path: /\/$/,
-    component: require('app/pages/Home').default
-  },
-  {
-    path: /\/about$/,
-    component: require('app/pages/About').default,
-    resolver: () => new Promise(resolve => {
-      window.setTimeout(resolve, 3000);
-    })
+    component: <DynamicComponent load={() => import('app/pages/Home')}>
+      {Component => Component ? <Component/> : null}
+    </DynamicComponent>
   },
   {
     path: /\/(.+)/,
-    component: require('app/pages/FourOhFour').default
+    component: <DynamicComponent load={() => import('app/pages/FourOhFour')}>
+      {Component => Component ? <Component/> : null}
+    </DynamicComponent>
   }
 ];

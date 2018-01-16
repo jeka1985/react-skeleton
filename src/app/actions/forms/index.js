@@ -11,6 +11,8 @@ export function reset(name, data) {
   };
 }
 
+/* @TODO: add destroy action */
+
 export function updateData(name, data) {
   return {
     type: types.updateData,
@@ -27,6 +29,7 @@ export function deleteData(name, keys) {
   };
 }
 
+/* @TODO: not sure about that*/
 export function clearErrors(name, keys) {
   return {
     type: types.clearErrors,

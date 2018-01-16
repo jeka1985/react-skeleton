@@ -7,7 +7,7 @@ export default function (ui = { }, action) {
     case types.locationRequest:
       return {
         ...without(ui, ['error']),
-        pending: action.path
+        pending: action.path,
       };
 
     case types.locationSucceed:
