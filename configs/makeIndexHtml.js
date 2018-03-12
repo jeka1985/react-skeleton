@@ -6,6 +6,3 @@ bundle.App.loadDeps()
   .then(() => {
     fs.writeFileSync(path.resolve(__dirname, '../index.html'), bundle.App.render({}))
   });
-
-
-
