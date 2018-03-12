@@ -6,6 +6,7 @@ module.exports = {
   ],
   plugins: [
     'transform-decorators',
-    'transform-object-rest-spread'
+    'transform-object-rest-spread',
+    'react-loadable/babel'
   ]
 };

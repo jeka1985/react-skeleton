@@ -9,12 +9,12 @@ import st from './style.scss';
 
 export default function App(props) {
   return <Provider store={create(props.data)}>
-      <div id="application">
-        <Modals/>
-        <Header/>
-        <Switch>
-          {routes.map((route, i) => <Route key={i} {...route}/>)}
-        </Switch>
-      </div>
+    <div id="application">
+      <Modals/>
+      <Header/>
+      <Switch>
+        {routes.map((route, i) => <Route key={i} {...route}/>)}
+      </Switch>
+    </div>
   </Provider>;
 }

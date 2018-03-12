@@ -11,6 +11,8 @@ export default connect((state, props) => ({
     return <a
       onClick={e => {
         e.preventDefault();
+        window.history.pushState({ path }, null, path);
+        window.scrollTo(0, 0);
         props.dispatch(navigate(path));
       }}
       href={path}

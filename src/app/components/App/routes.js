@@ -1,17 +1,26 @@
 import React from 'react';
-import DynamicComponent from 'app/components/DynamicImport';
+import Loadable from 'react-loadable';
 
 export default [
   {
     path: /\/$/,
-    component: <DynamicComponent load={() => import('app/pages/Home')}>
-      {Component => Component ? <Component/> : null}
-    </DynamicComponent>
+    component: Loadable({
+      loader: () => import('app/pages/Home'),
+      loading: () => <div>loading home</div>
+    })
+  },
+  {
+    path: /\/about$/,
+    component: Loadable({
+      loader: () =>  import('app/pages/About'),
+      loading: () => <div>loading about</div>
+    })
   },
   {
     path: /\/(.+)/,
-    component: <DynamicComponent load={() => import('app/pages/FourOhFour')}>
-      {Component => Component ? <Component/> : null}
-    </DynamicComponent>
+    component: Loadable({
+      loader: () =>  import('app/pages/FourOhFour'),
+      loading: () => <div>loading 404</div>
+    })
   }
 ];
