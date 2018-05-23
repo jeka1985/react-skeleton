@@ -4,5 +4,5 @@ var fs = require('fs'),
 
 bundle.App.loadDeps()
   .then(() => {
-    fs.writeFileSync(path.resolve(__dirname, '../index.html'), bundle.App.render({}))
+    fs.writeFileSync(path.resolve(__dirname, '../dist/index.html'), bundle.App.render({}))
   });

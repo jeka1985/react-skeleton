@@ -10,16 +10,17 @@ let root = path.resolve(__dirname, '../'),
     env = 'development',
     shellBundleName = 'app',
     vendorBundleName = 'vendor',
+    target = argv.target,
     isDev = env === 'development',
     isNode = argv.target === 'node';
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
 
   devtool: 'none',
 
   entry: { 
-    [argv.target]: isNode ? 
+    [target]: isNode ? 
       nodeEntryPath : 
       browserEntryPath
   },
@@ -28,7 +29,7 @@ module.exports = {
 
   output: {
     publicPath: '/dist/',
-    chunkFilename: `${argv.target}/chunks/[id]/script.js`,
+    chunkFilename: `${target}/chunks/[id]/script-[chunkHash:5].js`,
     library: 'App',
     libraryTarget: isNode ? 'commonjs': 'var'
   },
@@ -64,14 +65,14 @@ module.exports = {
   plugins: [
     !isNode && new ExtractPlugin({
       publicPath: '/dist/',
-      filename: `${argv.target}/[id].css`,
-      chunkFilename: `${argv.target}/chunks/[id]/styles.css`
+      filename: `web/main.css`,
+      chunkFilename: `web/chunks/[id]/styles-[chunkHash:5].css`
     }),
 
     !isNode && new ReactLoadablePlugin({
-      filename: './dist/react-loadable.json'
+      filename: './dist/stats.json'
     })
-  ].filter(item => !!item),
+  ].filter(Boolean),
   
   module: {
     rules: [
@@ -84,28 +85,23 @@ module.exports = {
         }
       },
       {
-        test: /\.scss$/,
-        use: isNode ? 
-          [
-            { loader: 'css-loader/locals', query: require('./css.config.js') },
-            'sass-loader'
-          ]:
-          [
-            ExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              query: require('./css.config.js')
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                config: {
-                  path: path.resolve(__dirname, 'postcss.config.js')
-                }
+        test: /\.less$/,
+        use: [
+          !isNode && ExtractPlugin.loader,
+          {
+            loader: isNode ? 'css-loader/locals' : 'css-loader' ,
+            query: require('./css.config.js')
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              config: {
+                path: path.resolve(__dirname, 'postcss.config.js')
               }
-            },
-            'sass-loader'
-          ]
+            }
+          },
+          'less-loader'
+        ].filter(Boolean)
       },
       {
         test: /\.(gif|png|jpg|jpeg|svg|ico)$/,
@@ -115,7 +111,7 @@ module.exports = {
             loader: 'file-loader',
             options: {
               publicPath: '/dist/',
-              name: 'assets/[folder]_[name].[ext]'
+              name: 'assets/[folder]_[name]-[hash:5].[ext]'
             }
           }
         ]

@@ -1,26 +1,24 @@
 import React from 'react';
 import Loadable from 'react-loadable';
+import FourOhFourPage from 'app/pages/FourOhFour';
 
 export default [
   {
     path: /\/$/,
     component: Loadable({
       loader: () => import('app/pages/Home'),
-      loading: () => <div>loading home</div>
+      loading: () => null
     })
   },
   {
     path: /\/about$/,
     component: Loadable({
       loader: () =>  import('app/pages/About'),
-      loading: () => <div>loading about</div>
+      loading: () => null
     })
   },
   {
     path: /\/(.+)/,
-    component: Loadable({
-      loader: () =>  import('app/pages/FourOhFour'),
-      loading: () => <div>loading 404</div>
-    })
+    component: FourOhFourPage
   }
 ];

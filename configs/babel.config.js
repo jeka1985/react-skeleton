@@ -1,10 +1,10 @@
 module.exports = {
   presets: [
-    'es2015',
-    'react',
-    'stage-0'
+    'env',
+    'react'
   ],
   plugins: [
+    'syntax-dynamic-import',
     'transform-decorators',
     'transform-object-rest-spread',
     'react-loadable/babel'
