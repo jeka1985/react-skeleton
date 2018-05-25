@@ -41,12 +41,6 @@ module.exports = {
     ]
   },
 
-  devServer: {
-    publicPath: 'dist/',
-    compress: true,
-    port: 9000
-  },
-
   optimization: !isNode ?
     {
       splitChunks: {
@@ -85,7 +79,7 @@ module.exports = {
         }
       },
       {
-        test: /\.less$/,
+        test: /\.styl$/,
         use: [
           !isNode && ExtractPlugin.loader,
           {
@@ -100,7 +94,7 @@ module.exports = {
               }
             }
           },
-          'less-loader'
+          'stylus-loader'
         ].filter(Boolean)
       },
       {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'app/components/Router';
-import st from './style.less';
+import st from './style.styl';
 
 export default function Header(props) {
   return <header className={st.wrap}>

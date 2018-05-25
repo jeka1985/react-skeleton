@@ -5,7 +5,6 @@ module.exports = {
   ],
   plugins: [
     'syntax-dynamic-import',
-    'transform-decorators',
     'transform-object-rest-spread',
     'react-loadable/babel'
   ]

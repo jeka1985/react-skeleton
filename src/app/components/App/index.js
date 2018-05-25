@@ -5,7 +5,7 @@ import { Switch, Route } from 'app/components/Router';
 import Header from 'app/components/Header';
 import Modals from 'app/components/Modals';
 import routes from './routes.js';
-import st from './style.less';
+import st from './style.styl';
 
 export default function App(props) {
   return <Provider store={create(props.data)}>
