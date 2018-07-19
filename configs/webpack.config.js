@@ -1,20 +1,39 @@
-let webpack = require('webpack'),
+let ExtractPlugin = require('mini-css-extract-plugin'),
+    ReactLoadablePlugin = require('react-loadable/webpack').ReactLoadablePlugin,
     path = require('path'),
-    ExtractPlugin = require('extract-text-webpack-plugin'),
-    UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
-    ExtractCssChunks = require('extract-css-chunks-webpack-plugin'),
-    BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+    argv = require('yargs').argv;
 
 let root = path.resolve(__dirname, '../'),
-    dest = path.resolve(root, 'build'),
-    entryPath = path.resolve(root, 'src/entry'),
+    browserEntryPath = path.resolve(root, 'src/entry/browser'),
+    nodeEntryPath = path.resolve(root, 'src/entry/node'),
     excludeRe = /node_modules|build/,
     env = 'development',
     shellBundleName = 'app',
     vendorBundleName = 'vendor',
-    isDev = env === 'development';
+    target = argv.target,
+    isDev = env === 'development',
+    isNode = argv.target === 'node';
 
-module.exports = () => ({
+module.exports = {
+  mode: 'production',
+
+  devtool: 'none',
+
+  entry: { 
+    [target]: isNode ? 
+      nodeEntryPath : 
+      browserEntryPath
+  },
+  
+  externals: isNode ? [require('webpack-node-externals')()] : [],
+
+  output: {
+    publicPath: '/dist/',
+    chunkFilename: `${target}/chunks/[id]/script-[chunkHash:5].js`,
+    library: 'App',
+    libraryTarget: isNode ? 'commonjs': 'var'
+  },
+
   resolve: {
     modules: [
       path.resolve(root, 'src/'),
@@ -22,100 +41,77 @@ module.exports = () => ({
     ]
   },
 
-  entry: {
-    [shellBundleName]: entryPath,
-    [vendorBundleName]: Object.keys(require('../package.json').dependencies)
-  },
+  optimization: !isNode ?
+    {
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /node_modules/,
+            name: 'vendors',
+            chunks: 'all',
+            filename: `vendors.js`
+          }
+        }
+      }
+    }: 
+    {},
 
-  output: {
-    filename: 'js/[name].js',
-    chunkFilename: 'js/[name].js',
-    path: dest,
-    publicPath: '/build/'
-  },
+  plugins: [
+    !isNode && new ExtractPlugin({
+      publicPath: '/dist/',
+      filename: `web/main.css`,
+      chunkFilename: `web/chunks/[id]/styles-[chunkHash:5].css`
+    }),
 
-  resolveLoader: {
-    moduleExtensions: ['-loader']
-  },
-
+    !isNode && new ReactLoadablePlugin({
+      filename: './dist/stats.json'
+    })
+  ].filter(Boolean),
+  
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: excludeRe,
         use: {
-          loader: 'babel',
+          loader: 'babel-loader',
           options: require('./babel.config.js')
         }
       },
       {
-        test: /\.scss$/,
-        exclude: excludeRe,
-        use: ExtractPlugin.extract([
+        test: /\.styl$/,
+        use: [
+          !isNode && ExtractPlugin.loader,
           {
-            loader: 'css',
+            loader: isNode ? 'css-loader/locals' : 'css-loader' ,
             query: require('./css.config.js')
           },
           {
-            loader: 'postcss',
+            loader: 'postcss-loader',
             options: {
               config: {
                 path: path.resolve(__dirname, 'postcss.config.js')
               }
             }
           },
-          'sass'
-        ])
+          'stylus-loader'
+        ].filter(Boolean)
       },
       {
         test: /\.(gif|png|jpg|jpeg|svg|ico)$/,
         exclude: excludeRe,
         use: [
           {
-            loader: 'file',
+            loader: 'file-loader',
             options: {
-              publicPath: '/build/',
-              name: '/img/[folder]_[name].[ext]'
+              publicPath: '/dist/',
+              name: 'assets/[folder]_[name]-[hash:5].[ext]'
             }
           }
         ]
-      }
+      }  
     ]
-  },
+  }
+}
 
-  devServer: {
-    historyApiFallback: true,
-    contentBase: root
-  },
-
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(env)
-      }
-    }),
-
-    !isDev && new UglifyJsPlugin({
-      sourceMap: true,
-      uglifyOptions: {
-        output: {
-          comments: false
-        },
-        compress: { warnings: false },
-        warnings: false
-      }
-    }),
-
-    new webpack.optimize.CommonsChunkPlugin({
-      name: vendorBundleName
-    }),
-    
-    new ExtractPlugin({
-      filename: 'css/all.css',
-      allChunks: true
-    })
-    // ,
-    // new BundleAnalyzerPlugin()
-  ].filter(item => !!item)
-})
 

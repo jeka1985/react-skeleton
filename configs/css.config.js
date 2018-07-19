@@ -1,7 +1,9 @@
 module.exports = {
-  root: '/build/css/',
+  root: '/dist/',
   minimize: true,
-  module: true,
+  modules: true,
   sourceMap: true,
-  localIdentName: '[folder]/[local]'
+  localIdentName: '[folder]-[local]_[hash:base64:5]'
 };
+
+

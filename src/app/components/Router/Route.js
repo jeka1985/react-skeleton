@@ -1,5 +1,5 @@
-import 'react';
+import React from 'react';
 
 export default function RouterRoute(props) {
-  return props.component;
+  return <props.component/>;
 }

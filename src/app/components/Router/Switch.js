@@ -22,12 +22,7 @@ export default connect(state => ({
     }
 
     componentWillReceiveProps(nextProps) {
-      var { pendingPath } = nextProps;
-
-      if (pendingPath) {
-        window.history.pushState({ path: pendingPath }, null, pendingPath);
-        this.resolveNavigation(pendingPath);
-      }
+      nextProps.pendingPath && this.resolveNavigation(nextProps.pendingPath);
     }
 
     resolveNavigation(path) {
@@ -50,7 +45,6 @@ export default connect(state => ({
 
     succeedTransition(path) {
       this.props.dispatch(navigateSuccess(path));
-      window.scrollTo(0, 0);
     }
 
     getRouteByPath(path) {
@@ -64,9 +58,6 @@ export default connect(state => ({
     }
 
     render() {
-
-      console.log(this.getRouteByPath(this.props.path));
-
       return this.getRouteByPath(this.props.path);
     }
   }

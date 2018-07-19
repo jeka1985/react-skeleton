@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectReducer } from 'app/store';
 import get from 'app/utils/object/get';
-import st from './style.scss';
+import st from './style.styl';
 
 export default connect(state => {
   return state;
